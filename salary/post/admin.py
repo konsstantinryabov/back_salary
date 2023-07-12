@@ -4,7 +4,7 @@ from post.models import Salary
 
 class SalaryAdmin(admin.ModelAdmin):
     list_display = ('id',
-                    'user',
+                    'worker',
                     'salar',
                     'date')
 
