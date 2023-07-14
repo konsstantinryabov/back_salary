@@ -6,7 +6,7 @@ router = DefaultRouter()
 
 router.register(r'users', UserViewSet)
 router.register(r'salary', AdminSalaryViewSet)
-router.register(r'salar', SalaryViewSet)
+router.register(r'worker', SalaryViewSet)
 
 
 urlpatterns = [

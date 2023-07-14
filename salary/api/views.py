@@ -3,8 +3,10 @@ from post.models import User, Salary
 from api.serializers import (CustomUserSerializer,
                              AdminSalarySerializer,
                              SalarySerializer)
-from api.permissions import WorkerOrReadOnly, ReadOnly
-from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (IsAdminUser,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -22,14 +24,9 @@ class AdminSalaryViewSet(viewsets.ModelViewSet):
 class SalaryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Salary.objects.all()
     serializer_class = SalarySerializer
-    permission_classes = (WorkerOrReadOnly,)
 
-    def get_permissions(self):
-        if self.action == 'retrieve':
-            return (ReadOnly(),)
-        return super().get_permissions()
-
-    def get_quetyset(self):
-        worker_id = self.get("worker_id")
-        new_queryset = Salary.objects(worker=worker_id)
-        return new_queryset
+    @action(detail=False, url_path='recent')
+    def get_worker(self, request):
+        work = Salary.objects.filter(worker=request.user)
+        serializer = self.get_serializer(work, many=True)
+        return Response(serializer.data)
